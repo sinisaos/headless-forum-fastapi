@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from piccolo.engine import engine_finder
 from piccolo_admin.endpoints import create_admin
@@ -6,6 +6,7 @@ from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
 from starlette.routing import Mount, Route
 
+from accounts.endpoints import oauth2_scheme, router
 from forum.tables import Category, Reply, Topic
 from home.endpoints import HomeEndpoint
 
@@ -36,6 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(router)
 
 FastAPIWrapper(
     root_url="/categories/",
@@ -46,6 +48,10 @@ FastAPIWrapper(
     ),
     fastapi_kwargs=FastAPIKwargs(
         all_routes={"tags": ["Category"]},
+        post={"dependencies": [Depends(oauth2_scheme)]},
+        put={"dependencies": [Depends(oauth2_scheme)]},
+        patch={"dependencies": [Depends(oauth2_scheme)]},
+        delete_single={"dependencies": [Depends(oauth2_scheme)]},
     ),
 )
 
@@ -58,6 +64,10 @@ FastAPIWrapper(
     ),
     fastapi_kwargs=FastAPIKwargs(
         all_routes={"tags": ["Topics"]},
+        post={"dependencies": [Depends(oauth2_scheme)]},
+        put={"dependencies": [Depends(oauth2_scheme)]},
+        patch={"dependencies": [Depends(oauth2_scheme)]},
+        delete_single={"dependencies": [Depends(oauth2_scheme)]},
     ),
 )
 
@@ -70,6 +80,10 @@ FastAPIWrapper(
     ),
     fastapi_kwargs=FastAPIKwargs(
         all_routes={"tags": ["Replies"]},
+        post={"dependencies": [Depends(oauth2_scheme)]},
+        put={"dependencies": [Depends(oauth2_scheme)]},
+        patch={"dependencies": [Depends(oauth2_scheme)]},
+        delete_single={"dependencies": [Depends(oauth2_scheme)]},
     ),
 )
 
