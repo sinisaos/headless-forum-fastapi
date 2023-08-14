@@ -1,6 +1,6 @@
-piccolo
-piccolo_admin
-piccolo_api
-fastapi
+piccolo==0.118.0
+piccolo_admin==0.56.0
+piccolo_api==0.58.0
+fastapi==0.99.1
 uvicorn
 python-jose

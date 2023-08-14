@@ -15,7 +15,8 @@ router = APIRouter(prefix="/accounts")
 
 
 def create_access_token(
-    data: dict, expires_delta: t.Optional[timedelta] = None
+    data: dict,
+    expires_delta: t.Optional[timedelta] = None,
 ):
     to_encode = data.copy()
     if expires_delta:
