@@ -13,7 +13,8 @@ CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 APP_CONFIG = AppConfig(
     app_name="home",
     migrations_folder_path=os.path.join(
-        CURRENT_DIRECTORY, "piccolo_migrations"
+        CURRENT_DIRECTORY,
+        "piccolo_migrations",
     ),
     table_classes=table_finder(modules=["home.tables"]),
     migration_dependencies=[],
