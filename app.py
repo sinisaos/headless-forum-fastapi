@@ -34,11 +34,17 @@ app.include_router(forum_router)
 
 @app.on_event("startup")
 async def open_database_connection_pool():
-    engine = engine_finder()
-    await engine.start_connnection_pool()
+    try:
+        engine = engine_finder()
+        await engine.start_connection_pool()
+    except Exception:
+        print("Unable to connect to the database")
 
 
 @app.on_event("shutdown")
 async def close_database_connection_pool():
-    engine = engine_finder()
-    await engine.close_connnection_pool()
+    try:
+        engine = engine_finder()
+        await engine.close_connection_pool()
+    except Exception:
+        print("Unable to connect to the database")
