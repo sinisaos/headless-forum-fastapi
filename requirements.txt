@@ -1,6 +1,0 @@
-piccolo
-piccolo_admin
-piccolo_api
-fastapi
-uvicorn
-python-jose

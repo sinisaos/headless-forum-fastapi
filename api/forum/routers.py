@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends
 from piccolo_api.crud.endpoints import PiccoloCRUD
 from piccolo_api.fastapi.endpoints import FastAPIKwargs, FastAPIWrapper
 
-from accounts.endpoints import oauth2_scheme
-from forum.tables import Category, Reply, Topic
+from api.accounts.routers import oauth2_scheme
+from api.forum.tables import Category, Reply, Topic
 
 forum_router = APIRouter()
 

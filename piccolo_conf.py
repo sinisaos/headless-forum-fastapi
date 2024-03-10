@@ -1,22 +1,21 @@
 from piccolo.conf.apps import AppRegistry
 from piccolo.engine.postgres import PostgresEngine
 
-from settings import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
+from config import settings
 
 DB = PostgresEngine(
     config={
-        "database": DB_NAME,
-        "user": DB_USER,
-        "password": DB_PASSWORD,
-        "host": DB_HOST,
-        "port": DB_PORT,
-    }
+        "database": settings.db_name,
+        "user": settings.db_user,
+        "password": settings.db_password,
+        "host": settings.db_host,
+        "port": settings.db_port,
+    },
 )
 
 APP_REGISTRY = AppRegistry(
     apps=[
-        "home.piccolo_app",
-        "forum.piccolo_app",
+        "api.forum.piccolo_app",
         "piccolo_admin.piccolo_app",
     ]
 )

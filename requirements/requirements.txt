@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+piccolo[postgres]
+piccolo_admin
+python-jose
+pydantic-settings

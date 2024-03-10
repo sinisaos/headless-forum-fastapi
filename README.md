@@ -15,7 +15,7 @@ git clone https://github.com/sinisaos/headless-forum-fastapi.git
 
 ```bash
 cd headless-forum-fastapi
-pip install -r requirements.txt
+pip install -r requirements/requirements.txt
 ```
 
 ### Create database table
@@ -38,26 +38,26 @@ DB_PASSWORD=your db password
 DB_HOST=your db host
 DB_PORT=your db port
 SECRET_KEY=your secret key
+ALGORITHM="HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
 ### Migrations
 
 ```bash
-piccolo migrations forwards session_auth
-piccolo migrations forwards user
-piccolo migrations forwards forum
+./scripts/migrations.sh
 ```
 
 ### Create admin user
 
 ```bash
-piccolo user create
+./scripts/user.sh
 ```
 
 ### Getting started 
 
 ```bash
-uvicorn app:app --port 8000 --host 0.0.0.0 
+./scripts/start.sh
 ```
 
 After site is running log in as admin user on [localhost:8000/admin/](http://localhost:8000/admin/) and add categories, topics etc. 

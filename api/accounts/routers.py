@@ -6,9 +6,9 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from piccolo.apps.user.tables import BaseUser
 
-from accounts.schema import Token, TokenData, UserModelIn, UserModelOut
-from forum.tables import Reply, Topic
-from settings import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
+from api.accounts.schema import Token, TokenData, UserModelIn, UserModelOut
+from api.forum.tables import Reply, Topic
+from config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="accounts/login")
 router = APIRouter(prefix="/accounts")
@@ -24,7 +24,9 @@ def create_access_token(
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode["exp"] = expire
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(
+        to_encode, settings.secret_key, algorithm=settings.algorithm
+    )
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -34,7 +36,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            token, settings.secret_key, algorithms=[settings.algorithm]
+        )
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
@@ -59,14 +63,16 @@ async def login_user(
     user = await BaseUser.login(
         username=form_data.username, password=form_data.password
     )
-    result = await BaseUser.select().where(BaseUser.id == user).first().run()
+    result: t.Any = await BaseUser.select().where(BaseUser.id == user).first()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(
+        minutes=settings.access_token_expire_minutes
+    )
     access_token = create_access_token(
         data={"sub": result["username"]}, expires_delta=access_token_expires
     )
@@ -107,7 +113,7 @@ async def user_topics(
     topics = (
         await Topic.select()
         .where(Topic.topic_user == current_user["id"])
-        .order_by(Topic.id, ascending=False)
+        .order_by(Topic._meta.primary_key, ascending=False)
         .run()
     )
     return [
@@ -125,7 +131,7 @@ async def user_replies(
     replies = (
         await Reply.select()
         .where(Reply.reply_user == current_user["id"])
-        .order_by(Reply.id, ascending=False)
+        .order_by(Reply._meta.primary_key, ascending=False)
         .run()
     )
     return [

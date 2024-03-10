@@ -5,18 +5,20 @@ the APP_CONFIG.
 
 import os
 
-from piccolo.conf.apps import AppConfig, table_finder
+from piccolo.conf.apps import AppConfig
+
+from api.forum.tables import Category, Reply, Topic
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
 APP_CONFIG = AppConfig(
-    app_name="home",
+    app_name="forum",
     migrations_folder_path=os.path.join(
         CURRENT_DIRECTORY,
         "piccolo_migrations",
     ),
-    table_classes=table_finder(modules=["home.tables"]),
+    table_classes=[Category, Topic, Reply],
     migration_dependencies=[],
     commands=[],
 )
