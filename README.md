@@ -68,6 +68,12 @@ Run tests.
 ./scripts/test.sh
 ```
 
+### Linting
+
+```bash
+./scripts/lint.sh
+```
+
 ### Getting started 
 
 ```bash
