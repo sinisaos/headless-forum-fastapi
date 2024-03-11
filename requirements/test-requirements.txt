@@ -1,0 +1,7 @@
+black
+coverage
+mypy
+piccolo[sqlite]
+pytest
+pytest-cov
+ruff

@@ -54,6 +54,26 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 ./scripts/user.sh
 ```
 
+### Testing
+
+Install test requirements.
+
+```bash
+pip install -r requirements/test-requirements.txt
+```
+
+Run tests.
+
+```bash
+./scripts/test.sh
+```
+
+### Linting
+
+```bash
+./scripts/lint.sh
+```
+
 ### Getting started 
 
 ```bash
