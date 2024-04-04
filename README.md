@@ -18,7 +18,7 @@ cd headless-forum-fastapi
 pip install -r requirements/requirements.txt
 ```
 
-### Create database table
+### Create database
 
 
 ```bash
