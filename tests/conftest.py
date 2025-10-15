@@ -1,15 +1,13 @@
 import pytest
 import pytest_asyncio
-from fastapi.testclient import TestClient
 from httpx import ASGITransport, AsyncClient
 from piccolo.apps.user.tables import BaseUser
-from piccolo.conf.apps import Finder
 from piccolo.table import create_db_tables, drop_db_tables
 
 from api.forum.tables import Category, Reply, Topic
 from main import app
 
-TABLES = Finder().get_table_classes()
+TABLES = [BaseUser, Category, Reply, Topic]
 
 
 @pytest.fixture
@@ -103,14 +101,13 @@ async def create_test_data():
 
 
 @pytest_asyncio.fixture()
-async def create_access_token() -> str:
-    client = TestClient(app)
+async def create_access_token(async_client) -> str:
     payload = {
         "username": "testuser",
         "password": "testuser123",
     }
 
-    response = client.post(
+    response = await async_client.post(
         "/accounts/login/",
         data=payload,
         headers={"content-type": "application/x-www-form-urlencoded"},

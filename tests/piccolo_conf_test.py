@@ -1,4 +1,3 @@
-from piccolo.conf.apps import AppRegistry
 from piccolo.engine.postgres import PostgresEngine
 
 from config import settings
@@ -11,11 +10,4 @@ DB = PostgresEngine(
         "host": settings.db_host,
         "port": settings.db_port,
     },
-)
-
-APP_REGISTRY = AppRegistry(
-    apps=[
-        "api.forum.piccolo_app",
-        "piccolo_admin.piccolo_app",
-    ]
 )
