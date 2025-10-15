@@ -1,37 +1,47 @@
-from pathlib import Path
-
 import pytest
+import pytest_asyncio
 from fastapi.testclient import TestClient
+from httpx import ASGITransport, AsyncClient
 from piccolo.apps.user.tables import BaseUser
-from piccolo.table import create_db_tables_sync, drop_db_tables_sync
+from piccolo.conf.apps import Finder
+from piccolo.table import create_db_tables, drop_db_tables
 
 from api.forum.tables import Category, Reply, Topic
 from main import app
-from tests.piccolo_conf_test import DB
 
-TABLES = [BaseUser, Category, Topic, Reply]
-
-
-@pytest.fixture(autouse=True)
-def test_db():
-    db_path = Path(DB.path)
-    for _table in TABLES:
-        _table._meta._db = DB
-    create_db_tables_sync(*TABLES, if_not_exists=True)
-    yield
-    drop_db_tables_sync(*TABLES)
-    db_path.unlink()
+TABLES = Finder().get_table_classes()
 
 
 @pytest.fixture
-def create_test_data():
+async def async_client():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(
+        transport=transport, base_url="http://test"
+    ) as client:
+        yield client
+
+
+@pytest.fixture
+def anyio_backend():
+    return "asyncio"
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def test_db():
+    await create_db_tables(*TABLES, if_not_exists=True)
+    yield
+    await drop_db_tables(*TABLES)
+
+
+@pytest_asyncio.fixture()
+async def create_test_data():
     user = BaseUser(
         username="testuser",
         email="testuser@user.com",
         password="testuser123",
         active=True,
     )
-    user.save().run_sync()
+    await user.save()
 
     second_user = BaseUser(
         username="seconduser",
@@ -39,25 +49,25 @@ def create_test_data():
         password="seconduser123",
         active=True,
     )
-    second_user.save().run_sync()
+    await second_user.save()
 
-    user = BaseUser.select().first().run_sync()
+    user = await BaseUser.select().first()
 
     first_category = Category(
         name="Test category one",
         description="Test category description one",
     )
 
-    first_category.save().run_sync()
+    await first_category.save()
 
     second_category = Category(
         name="Test category two",
         description="Test category description two",
     )
 
-    second_category.save().run_sync()
+    await second_category.save()
 
-    category = Category.select().first().run_sync()
+    category = await Category.select().first()
 
     first_topic = Topic(
         subject="Test topic one",
@@ -65,7 +75,7 @@ def create_test_data():
         topic_user=user["id"],
     )
 
-    first_topic.save().run_sync()
+    await first_topic.save()
 
     second_topic = Topic(
         subject="Test topic two",
@@ -73,7 +83,7 @@ def create_test_data():
         topic_user=user["id"],
     )
 
-    second_topic.save().run_sync()
+    await second_topic.save()
 
     first_reply = Reply(
         description="Reply description one",
@@ -81,7 +91,7 @@ def create_test_data():
         reply_user=user["id"],
     )
 
-    first_reply.save().run_sync()
+    await first_reply.save()
 
     second_reply = Reply(
         description="Reply description two",
@@ -89,11 +99,11 @@ def create_test_data():
         reply_user=user["id"],
     )
 
-    second_reply.save().run_sync()
+    await second_reply.save()
 
 
-@pytest.fixture
-def create_access_token() -> str:
+@pytest_asyncio.fixture()
+async def create_access_token() -> str:
     client = TestClient(app)
     payload = {
         "username": "testuser",

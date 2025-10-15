@@ -1,12 +1,14 @@
-from fastapi.testclient import TestClient
-
-from main import app
+import pytest
 
 
-def test_current_user(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
-
-    response = client.get(
+@pytest.mark.anyio
+async def test_current_user(
+    test_db,
+    create_test_data,
+    create_access_token,
+    async_client,
+):
+    response = await async_client.get(
         "/accounts/profile/",
         headers={"Authorization": f"Bearer {create_access_token}"},
     )
@@ -14,10 +16,14 @@ def test_current_user(test_db, create_test_data, create_access_token):
     assert response.json()["username"] == "testuser"
 
 
-def test_current_user_topics(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
-
-    response = client.get(
+@pytest.mark.anyio
+async def test_current_user_topics(
+    test_db,
+    create_test_data,
+    create_access_token,
+    async_client,
+):
+    response = await async_client.get(
         "/accounts/profile/topics/",
         headers={"Authorization": f"Bearer {create_access_token}"},
     )
@@ -26,10 +32,14 @@ def test_current_user_topics(test_db, create_test_data, create_access_token):
     assert len(response.json()[0]["topics"]) == 2
 
 
-def test_current_user_replies(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
-
-    response = client.get(
+@pytest.mark.anyio
+async def test_current_user_replies(
+    test_db,
+    create_test_data,
+    create_access_token,
+    async_client,
+):
+    response = await async_client.get(
         "/accounts/profile/replies/",
         headers={"Authorization": f"Bearer {create_access_token}"},
     )

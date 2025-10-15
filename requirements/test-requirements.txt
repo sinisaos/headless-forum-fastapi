@@ -3,5 +3,7 @@ coverage
 mypy
 piccolo[sqlite]
 pytest
+pytest_asyncio
 pytest-cov
 ruff
+trio
