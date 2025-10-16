@@ -3,30 +3,28 @@ from fastapi.testclient import TestClient
 from api.forum.tables import Category
 from main import app
 
+client = TestClient(app)
+
 
 def test_get_all_categories(test_db, create_test_data):
-    client = TestClient(app)
     response = client.get("/categories/")
     assert response.status_code == 200
     assert len(response.json()["rows"]) == 2
 
 
 def test_get_single_category(test_db, create_test_data):
-    client = TestClient(app)
     response = client.get("/categories/1/")
     assert response.status_code == 200
     assert response.json()["name"] == "Test category one"
 
 
 def test_get_record_not_found(test_db, create_test_data):
-    client = TestClient(app)
     response = client.get("/categories/10/")
     assert response.status_code == 404
     assert response.text == "The resource doesn't exist"
 
 
 def test_create_category(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
 
     payload = {
         "name": "Test category three",
@@ -47,7 +45,6 @@ def test_create_category(test_db, create_test_data, create_access_token):
 
 
 def test_update_category(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
 
     payload = {
         "name": "Updated test category two",
@@ -70,7 +67,6 @@ def test_update_category(test_db, create_test_data, create_access_token):
 def test_update_record_not_found(
     test_db, create_test_data, create_access_token
 ):
-    client = TestClient(app)
 
     payload = {
         "name": "Updated test category two",
@@ -86,7 +82,6 @@ def test_update_record_not_found(
 
 
 def test_delete_category(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
     response = client.delete(
         "/categories/2/",
         headers={"Authorization": f"Bearer {create_access_token}"},
@@ -97,7 +92,6 @@ def test_delete_category(test_db, create_test_data, create_access_token):
 def test_delete_record_not_found(
     test_db, create_test_data, create_access_token
 ):
-    client = TestClient(app)
     response = client.delete(
         "/categories/10/",
         headers={"Authorization": f"Bearer {create_access_token}"},

@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pytest
 from fastapi.testclient import TestClient
 from piccolo.apps.user.tables import BaseUser
@@ -7,20 +5,15 @@ from piccolo.table import create_db_tables_sync, drop_db_tables_sync
 
 from api.forum.tables import Category, Reply, Topic
 from main import app
-from tests.piccolo_conf_test import DB
 
 TABLES = [BaseUser, Category, Topic, Reply]
 
 
 @pytest.fixture(autouse=True)
 def test_db():
-    db_path = Path(DB.path)
-    for _table in TABLES:
-        _table._meta._db = DB
     create_db_tables_sync(*TABLES, if_not_exists=True)
     yield
     drop_db_tables_sync(*TABLES)
-    db_path.unlink()
 
 
 @pytest.fixture

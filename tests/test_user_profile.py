@@ -2,10 +2,10 @@ from fastapi.testclient import TestClient
 
 from main import app
 
+client = TestClient(app)
+
 
 def test_current_user(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
-
     response = client.get(
         "/accounts/profile/",
         headers={"Authorization": f"Bearer {create_access_token}"},
@@ -15,8 +15,6 @@ def test_current_user(test_db, create_test_data, create_access_token):
 
 
 def test_current_user_topics(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
-
     response = client.get(
         "/accounts/profile/topics/",
         headers={"Authorization": f"Bearer {create_access_token}"},
@@ -27,8 +25,6 @@ def test_current_user_topics(test_db, create_test_data, create_access_token):
 
 
 def test_current_user_replies(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
-
     response = client.get(
         "/accounts/profile/replies/",
         headers={"Authorization": f"Bearer {create_access_token}"},

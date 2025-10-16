@@ -4,30 +4,28 @@ from piccolo.apps.user.tables import BaseUser
 from api.forum.tables import Category, Topic
 from main import app
 
+client = TestClient(app)
+
 
 def test_get_all_topics(test_db, create_test_data):
-    client = TestClient(app)
     response = client.get("/topics/")
     assert response.status_code == 200
     assert len(response.json()["rows"]) == 2
 
 
 def test_get_single_topic(test_db, create_test_data):
-    client = TestClient(app)
     response = client.get("/topics/1/")
     assert response.status_code == 200
     assert response.json()["subject"] == "Test topic one"
 
 
 def test_get_record_not_found(test_db, create_test_data):
-    client = TestClient(app)
     response = client.get("/topics/10/")
     assert response.status_code == 404
     assert response.text == "The resource doesn't exist"
 
 
 def test_create_topic(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
 
     user = BaseUser.select().first().run_sync()
     category = Category.select().first().run_sync()
@@ -53,7 +51,6 @@ def test_create_topic(test_db, create_test_data, create_access_token):
 
 
 def test_update_topic(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
 
     payload = {
         "subject": "Updated test topic two",
@@ -76,7 +73,6 @@ def test_update_topic(test_db, create_test_data, create_access_token):
 def test_update_record_not_found(
     test_db, create_test_data, create_access_token
 ):
-    client = TestClient(app)
 
     payload = {
         "name": "Updated test topic two",
@@ -92,7 +88,6 @@ def test_update_record_not_found(
 
 
 def test_delete_topic(test_db, create_test_data, create_access_token):
-    client = TestClient(app)
 
     response = client.delete(
         "/topics/2/",
@@ -104,7 +99,6 @@ def test_delete_topic(test_db, create_test_data, create_access_token):
 def test_delete_record_not_found(
     test_db, create_test_data, create_access_token
 ):
-    client = TestClient(app)
     response = client.delete(
         "/topics/10/",
         headers={"Authorization": f"Bearer {create_access_token}"},

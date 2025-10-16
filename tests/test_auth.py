@@ -2,9 +2,10 @@ from fastapi.testclient import TestClient
 
 from main import app
 
+client = TestClient(app)
+
 
 def test_user_register(test_db, create_test_data):
-    client = TestClient(app)
     payload = {
         "username": "user",
         "email": "user@user.com",
@@ -21,7 +22,6 @@ def test_user_register(test_db, create_test_data):
 
 
 def test_register_failed(test_db, create_test_data):
-    client = TestClient(app)
     payload = {
         "username": "testuser",
         "email": "testuser@user.com",
@@ -40,7 +40,6 @@ def test_register_failed(test_db, create_test_data):
 
 
 def test_login(test_db, create_test_data):
-    client = TestClient(app)
     payload = {
         "username": "testuser",
         "password": "testuser123",
@@ -57,7 +56,6 @@ def test_login(test_db, create_test_data):
 
 
 def test_login_failed(test_db, create_test_data):
-    client = TestClient(app)
     payload = {
         "username": "wronguser",
         "password": "wronguser123",
